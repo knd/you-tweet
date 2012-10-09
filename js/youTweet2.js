@@ -5,9 +5,20 @@ var youTweet = {
         /** List of div containers around comments */
         'containers' : $( 'li .comment' ),
 
-        'commentTexts' : $( '.comment-text' ),
+        'commentTexts' : ( function () {
+            var $commentTexts = $( '.comment-text p:first-child' );
+            var comments = $.makeArray( $commentTexts );
+            var commentContents = [];
+            for ( var i=0; i < comments.length; i++ ) {
+                commentContents.push( comments[i].innerText );
+            }
+            return commentContents;
+        } )(),
 
-        /** Get the list of comment ids for tweets */
+        /** 
+         *  Get the list of comment ids for tweets.
+         *  @return {Array JavaScript}
+         */
         'commentIds' : ( function () {
             var $commentList = $( '.comment' );
             var comments = $.makeArray( $commentList );
@@ -75,14 +86,29 @@ var youTweet = {
         if ( config && typeof( config ) == 'object' ) {
             $.extend( youTweet.config, config );
         }
+
+        // turn all list into JavaScript arrays
+        var commentList = youTweet.config.commentTexts;
+        var commentIdList = youTweet.config.commentIds;
+        var commentActionDivs = youTweet.config.actionContainers;
+
+        commentList = $.isArray( commentList ) ? commentList: $.makeArray( commentList );
+        commentIdList = $.isArray( commentIdList ) ? commentIdList : $.makeArray( commentIdList );
+        commentActionDivs = $.isArray( commentActionDivs ) ? commentActionDivs : $.makeArray( commentActionDivs );
+
+        //console.log( commentList );
+        //console.log( commentIdList );
+        //console.log( commentActionDivs );
     },
 
     /**
      *  Function to add tweet icons into list of comments
      */
     'addTweetIcons' : function () {
-
+        
     }
+
+    
 
 };
 
