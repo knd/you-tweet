@@ -1,0 +1,24 @@
+{
+    "name": "You Tweet Comments",
+    "version": "1.0",
+    "manifest_version": 2,
+    "description": "Tweet the cool and funny comments",
+    "icons": {
+        "16": "img/tweetBird_16.png",
+        "48": "img/tweetBird_48.png",
+        "128": "img/tweetBird_128.png"
+    },
+    "web_accessible_resources": [
+        "img/tweetBird_16.png"
+    ],
+    "content_scripts": [ 
+        {
+            "matches": [ "http://www.youtube.com/*", "https://www.youtube.com/*" ],
+            "js": [ "js/jquery-1.8.2.min.js", "js/youTweet2.js" ],
+            "run_at": "document_end"
+        }
+    ]
+    
+
+
+}
