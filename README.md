@@ -1,4 +1,4 @@
 TODO:
 
-* Append the tweet image to comments
-* Twitter APIs
+* Tie actions to button
+* Bit the link
