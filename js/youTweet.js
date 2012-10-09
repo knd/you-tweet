@@ -1,3 +1,6 @@
+/*
+ *  Metadata of youTweet plugin.
+ */
 var youTweet = {
 
     'config' : {
@@ -8,10 +11,13 @@ var youTweet = {
         /** Tweet Icon to add next to comment actions buttons */
         'tweetBird' : chrome.extension.getURL( "img/tweetBird_16.png" ),
 
-        /** Tweeet link call */
+        /** Tweet link call */
         'tweetAddress' : 'https://twitter.com/share?',
 
-        /** Return tweet link */
+        /** 
+         *  Return tweet link 
+         *  @return {String} 
+         */
         'getTweetLink' : function( params ) {
             return youTweet.config.tweetAddress + 'url=' + params.url + 
                     '&text=' + params.comment + '&via=' + params.via;
@@ -84,10 +90,6 @@ var youTweet = {
         var commentIdList = youTweet.getCommentIds();
         var commentActionDivs = youTweet.getActionContainers();
         
-        //console.log( commentList );
-        //console.log( commentIdList.length );
-        //console.log( commentActionDivs.length ); 
-
         if ( commentList.length != commentIdList.length
             || commentIdList.length != commentActionDivs.length
             || commentList.length != commentActionDivs.length ) {
@@ -95,12 +97,6 @@ var youTweet = {
         } else {
             youTweet.commentsLength = commentList.length;
         }
-
-        /* Debug */ 
-        //console.log( youTweet.commentsLength );
-        //console.log( commentList );
-        //console.log( commentIdList );
-        //console.log( commentActionDivs ); 
 
         // bind data in the form { ... , 'id1': { 'content': 'abc', 'actionDiv' : '<div>abc</div>' }  , ... }
         youTweet.data = youTweet.combineData( commentIdList, commentList, commentActionDivs );
@@ -228,6 +224,9 @@ var youTweet = {
 
 };
 
+// start the plugin
+// due to unexpecting behavior of youtube ajax call
+// the plugin periodically check every second
 setInterval( function() { 
   youTweet.init(); 
 } , 1000 );
