@@ -5,11 +5,24 @@ var youTweet = {
         /** List of div containers around comments */
         'containers' : $( 'li .comment' ),
 
+        'commentTexts' : $( '.comment-text' ),
+
+        /** Get the list of comment ids for tweets */
+        'commentIds' : ( function () {
+            var $commentList = $( '.comment' );
+            var comments = $.makeArray( $commentList );
+            var commentIds = [];
+            for ( var i=0; i < comments.length; i++ ) {
+                commentIds.push( comments[i].getAttribute( "data-id" ) );
+            }
+            return commentIds;
+        } )(),
+
         /** List of div containers around action buttons */
         'actionContainers' : $( '.comment-actions' ),
 
         /** Tweet Icon to add next to comment actions buttons */
-        'tweetBird' : chrome.extension.getURL( "img/tweetBird_16.png" );
+        'tweetBird' : chrome.extension.getURL( "img/tweetBird_16.png" ),
 
         /** 
          *  Template for tweet action button.
@@ -28,7 +41,7 @@ var youTweet = {
             template +=       '</button>';
             template +=     '</span>';
             return $(template);
-        }
+        },
 
         /** Information to request bit link with jquery ajax call */
         'bitlyApiKey' : 'R_944dcbf509276cc94d300a404abd733f',
@@ -43,24 +56,36 @@ var youTweet = {
          */
         'bitlyGetShortUrl' : function( result ) {
             return result.data.url;
-        }
+        },
 
         /** Information about window popup for tweet */
         'height' : '650',
 
         'width' : '1024',
 
-        'scrollbars' : true, 
+        'scrollbars' : true
 
 
         
     },
 
     'init' : function( config ) {
-      
+
+        // custom configuration
+        if ( config && typeof( config ) == 'object' ) {
+            $.extend( youTweet.config, config );
+        }
+    },
+
+    /**
+     *  Function to add tweet icons into list of comments
+     */
+    'addTweetIcons' : function () {
+
     }
 
-
-
 };
+
+youTweet.init();
+console.log( youTweet );
 
