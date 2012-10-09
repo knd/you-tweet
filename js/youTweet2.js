@@ -2,36 +2,6 @@ var youTweet = {
 
     'config' : {
 
-        /** List of div containers around comments */
-        'containers' : $( 'li .comment' ),
-
-        'commentTexts' : ( function () {
-            var $commentTexts = $( '.comment-text p:first-child' );
-            var comments = $.makeArray( $commentTexts );
-            var commentContents = [];
-            for ( var i=0; i < comments.length; i++ ) {
-                commentContents.push( comments[i].innerText );
-            }
-            return commentContents;
-        } )(),
-
-        /** 
-         *  Get the list of comment ids for tweets.
-         *  @return {Array JavaScript}
-         */
-        'commentIds' : ( function () {
-            var $commentList = $( '.comment' );
-            var comments = $.makeArray( $commentList );
-            var commentIds = [];
-            for ( var i=0; i < comments.length; i++ ) {
-                commentIds.push( comments[i].getAttribute( "data-id" ) );
-            }
-            return commentIds;
-        } )(),
-
-        /** List of div containers around action buttons */
-        'actionContainers' : $( '.comment-actions' ),
-
         /** Tweet Icon to add next to comment actions buttons */
         'tweetBird' : chrome.extension.getURL( "img/tweetBird_16.png" ),
 
@@ -40,7 +10,7 @@ var youTweet = {
          *  @return {jQuery object}
          */
         'tweetIconTemplate': function( iconUrl ) {
-            var template = '<span class="yt-uix-button-group">';
+            var template = '<span class="yt-uix-button-group youtweet">';
             template +=       '<button class="start end comment-action';
             template +=       ' yt-uix-button yt-uix-button-default';
             template +=       ' yt-uix-button-empty yt-uix-tooltip';
@@ -75,8 +45,6 @@ var youTweet = {
         'width' : '1024',
 
         'scrollbars' : true
-
-
         
     },
 
@@ -88,30 +56,119 @@ var youTweet = {
         }
 
         // turn all list into JavaScript arrays
-        var commentList = youTweet.config.commentTexts;
-        var commentIdList = youTweet.config.commentIds;
-        var commentActionDivs = youTweet.config.actionContainers;
+        var commentList = youTweet.getCommentTexts();
+        var commentIdList = youTweet.getCommentIds();
+        var commentActionDivs = youTweet.getActionContainers();
+        
+        //console.log( commentList );
+        //console.log( commentIdList.length );
+        //console.log( commentActionDivs.length ); 
 
-        commentList = $.isArray( commentList ) ? commentList: $.makeArray( commentList );
-        commentIdList = $.isArray( commentIdList ) ? commentIdList : $.makeArray( commentIdList );
-        commentActionDivs = $.isArray( commentActionDivs ) ? commentActionDivs : $.makeArray( commentActionDivs );
+        if ( commentList.length != commentIdList.length
+            || commentIdList.length != commentActionDivs.length
+            || commentList.length != commentActionDivs.length ) {
+            return;
+        } else {
+            youTweet.commentsLength = commentList.length;
+        }
 
+        /* Debug */ 
+        //console.log( youTweet.commentsLength );
         //console.log( commentList );
         //console.log( commentIdList );
-        //console.log( commentActionDivs );
+        //console.log( commentActionDivs ); 
+
+        // bind data in the form { ... , 'id1': { 'content': 'abc', 'actionDiv' : '<div>abc</div>' }  , ... }
+        youTweet.data = youTweet.combineData( commentIdList, commentList, commentActionDivs );
+        
+        // process data
+        if ( youTweet.data ) {
+            youTweet.addTweetIcons( youTweet.data );
+        }
+
     },
 
     /**
      *  Function to add tweet icons into list of comments
      */
-    'addTweetIcons' : function () {
+    'addTweetIcons' : function ( data ) {
+        $.each( data, function( id, value ) {
+            var id = value.id;
+            var content = value.content;
+            var actionDiv = value.actionDiv;
+            
+            var childNodesBySpan = $(actionDiv).children( 'span' );
+            childNodesBySpan = $.makeArray( childNodesBySpan );
+            if ( childNodesBySpan.length > 2 ) {
+                return false;
+            }
+            var tweetIcon = youTweet.config.tweetIconTemplate( youTweet.config.tweetBird );
+            var reference = childNodesBySpan[0];
+            actionDiv.insertBefore( tweetIcon[0], reference );
+        });
         
+    },
+
+    /**
+     *  Return the list of comment contents.
+     *  @return {Array JavaScript} list of string texts
+     */
+    'getCommentTexts' : function () {
+        var $commentTexts = $( '.comment-body .content' );
+        var comments = $.makeArray( $commentTexts );
+        var commentContents = [];
+        for ( var i=0; i < comments.length; i++ ) {
+            commentContents.push( comments[i].innerText );
+        }
+        return commentContents;
+    },
+
+    /**
+     *  Return the list of comment ids.
+     *  @return {Array JavaScript} list of string ids
+     */
+    'getCommentIds' : function () {
+        var $commentList = $( '.comment' );
+        var comments = $.makeArray( $commentList );
+        var commentIds = [];
+        for ( var i=0; i < comments.length; i++ ) {
+            commentIds.push( comments[i].getAttribute( "data-id" ) );
+        }
+        return commentIds;
+    },
+
+    /**
+     *  Return the list of action containers/div
+     *  @return {Array JavaScript} list of divs
+     */
+    'getActionContainers' : function () {
+        return $.makeArray( $( '.comment-actions' ) );
+    },
+
+    /**
+     *  Return a master unordered combined data source
+     *  @return {Object JavaScript} associative array containing
+     *          list of  '49fdfa0' : { 'content' : '...', 'actionDiv' : '...' }
+     */
+    'combineData' : function ( ids, contents, divs ) {
+        var combinedData = {};
+        if ( !youTweet.commentsLength ) return combinedData;
+        for ( var i=0; i < youTweet.commentsLength; i++ ) {
+            combinedData[ ids[i] ] = { 'content' : contents[i],
+                                       'actionDiv' : divs[i] };
+        }
+        return combinedData;
     }
 
     
 
 };
 
-youTweet.init();
-console.log( youTweet );
+setInterval( function() { 
+//document.body.onmousedown = function () {
+  youTweet.init(); 
+  console.log( 'test' );
+//}
+} , 1000 );
+//youTweet.init();
 
