@@ -1,13 +1,13 @@
 YouTweet
 --------
 
-Nothing fancy. This just helps you tweet faster. Why?
+Nothing fancy. This just helps you tweet faster. Why? Watch:
 
-Before:
+####Before:
 
 ![Before](https://github.com/knd/YouTweet/raw/master/img/beforeTweet.png)
 
-After:
+####After:
 
 ![After](https://github.com/knd/YouTweet/raw/master/img/afterTweet.png)
 
