@@ -4,10 +4,10 @@ YouTweet
 Nothing fancy. This just helps you tweet faster. Why?
 
 Before:
-<img src="img/beforeTweet.png" alt="before" />
+![Before](https://github.com/knd/YouTweet/raw/master/img/beforeTweet.png)
 
 After:
-<img src="img/afterTweet.png" alt="after" />
+![After](https://github.com/knd/YouTweet/raw/master/img/afterTweet.png)
 
 #### Where to get?
 ------------------
